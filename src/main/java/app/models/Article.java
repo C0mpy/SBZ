@@ -3,7 +3,6 @@ package app.models;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
@@ -13,10 +12,8 @@ public class Article {
 		ACTIVE,
 		ARCHIVE
 	}
-	
 	@Id
-	@GeneratedValue
-	Long id;
+	String code;
 	String name;
 	double price;
 	int count;

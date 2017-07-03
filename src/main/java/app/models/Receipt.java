@@ -19,8 +19,7 @@ public class Receipt {
 	}
 	
 	@Id
-	@GeneratedValue
-	Long id;
+	String code;
 	Date date;
 	@ManyToOne
 	Customer customer;

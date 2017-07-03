@@ -13,8 +13,7 @@ public class Discount {
 	}
 	
 	@Id
-	@GeneratedValue
-	Long id;
+	String code;
 	int discount;
 	Type type;
 

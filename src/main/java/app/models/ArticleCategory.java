@@ -9,8 +9,7 @@ import javax.persistence.ManyToOne;
 public class ArticleCategory {
 
 	@Id
-	@GeneratedValue
-	Long id;
+	String code;
 	String name;
 	int maxDiscount;
 	
