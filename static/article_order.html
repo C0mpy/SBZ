@@ -1,0 +1,49 @@
+<br><br><br><br>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-4 item-photo">
+			<img style="max-width: 100%;"
+				ng-src="{{articleOrderCtrl.article.picture}}" />
+		</div>
+		<div class="col-xs-5" style="border: 0px solid gray">
+			<h3>{{articleOrderCtrl.article.name}}</h3>
+			<h5>Code: {{articleOrderCtrl.article.code}}</h5>
+			<h5 style="color: #337ab7">Category: {{articleOrderCtrl.article.category.name}}</h5>
+
+			<h4 class="title-price">
+				<small>Price:</small>
+			</h4>
+			<h3>US$ {{articleOrderCtrl.article.price}}</h3><br>
+
+			<div class="section" style="padding-bottom: 20px;">
+				<h4 class="title-attr">
+					<small>Ammount:</small>
+				</h4>
+				<div>
+					<div class="input-group">
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default btn-number" ng-click="articleOrderCtrl.decreaseAmmount()" ng-disabled="articleOrderCtrl.ammount <= 1" data-type="minus">
+								<span class="glyphicon glyphicon-minus"></span>
+							</button>
+						</span>
+						<input type="text" class="form-control input-number" ng-model="articleOrderCtrl.ammount"> 
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default btn-number" ng-click="articleOrderCtrl.increaseAmmount()" data-type="plus">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="section" style="padding-bottom: 20px; text-align: center;">
+				<button class="btn btn-success" ng-click="articleOrderCtrl.order()">
+					<span style="margin-right: 20px"
+						class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+					Add to Cart
+				</button><br><br>
+				<a href="" ng-click="articleOrderCtrl.goTo(articleOrderCtrl.user.type)">Back</a>
+			</div>
+		</div>
+	</div>
+</div>

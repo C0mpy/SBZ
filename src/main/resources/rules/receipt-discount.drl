@@ -1,0 +1,98 @@
+//created on: 12.08.2017.
+package rules
+
+//list any import classes here.
+import app.models.Receipt;
+import app.models.ReceiptDiscount;
+import app.models.Item;
+import java.util.Date;
+
+//declare any global variables here
+global Date currentDate;
+
+
+
+rule "add 5% BASE discount if totalPrice on receipt is >= 200$"
+	agenda-group "discounts"
+	
+    when 
+    	$r: Receipt(totalPrice >= 200)
+    then
+    	System.out.println("VREDNOST RACUNA PREKO 200$");
+        $r.getDiscounts().add(new ReceiptDiscount(5, "BASE", "if you order items of value over 200$ in one receipt you get 5% discount", $r));
+		
+end
+
+rule "add 1% ADDITIONAL discount if buyer is site user for at least 2 years"
+	agenda-group "discounts"
+	
+    when 
+    	$r: Receipt(customer.getRegistered().getTime() < (currentDate.getTime() - (365 * 2 * 24 * 60 * 60 * 1000)))
+    then
+    	System.out.println("KORISNIK SAJTA BAR 2 GODINE");
+        $r.getDiscounts().add(new ReceiptDiscount(1, "ADDITIONAL", "if you have registered at least 2 years ago you get 1% discount", $r));
+		
+end
+
+rule "add 1% ADDITIONAL discount if buyer is SILVER or GOLD category"
+	agenda-group "discounts"
+	
+    when 
+    	$r: Receipt(customer.getCategory().getName() in ("SILVER", "GOLD"))
+    then
+    	System.out.println("KORISNIK JE GOLD ILI SILVER");
+        $r.getDiscounts().add(new ReceiptDiscount(1, "ADDITIONAL", "if you are a GOLD or SILVER member you get 1% discount", $r));
+		
+end
+
+rule "add 3% ADDITIONAL discount if total price is >= 500$ and there are at least 10 items in the receipt that make 50% of value"
+	agenda-group "discounts"
+	
+    when 
+    	$r: Receipt($receiptTotalPrice: totalPrice >= 500, $items: items)
+    	Item(amount >= 10, totalPrice >= $receiptTotalPrice * 0.5) from $items
+    then
+    	System.out.println("KORISNIK JE PAZARIO ZA 500$ I IMA BAR 10 ITEMA KOJI CINE BAR 50% VR RACUNA");
+        $r.getDiscounts().add(new ReceiptDiscount(3, "ADDITIONAL", "if you order at least 10 articles that make over 50 of receipt value and receipt value is over 500$ you get 3% discount", $r));
+		
+end
+
+rule "calculate final discount for receipt"
+	agenda-group "discounts"
+	salience -3
+	
+	when 
+		$r: Receipt($discounts: discounts)
+		Number($total_discount: intValue) from accumulate(
+				ReceiptDiscount($d: discount) from $discounts,
+				init(int total_discount = 0;),
+				action(total_discount += $d;),
+				reverse(total_discount -= $d;),
+				result(total_discount)
+		)
+	then
+		System.out.println("UKUPAN POPUST ZA RACUN IZNOSI: " + $total_discount);
+		$r.setDiscount($total_discount);
+end
+
+// add all final prices of Items in the Receipt and multiply with Receipts total Discount, save in Receipt's finalPrice field
+rule "calculate final price"
+	agenda-group "discounts"
+	salience -4
+	
+	when 
+		$r: Receipt($discount: discount, $items: items)
+		//sum final price of every item in receipt
+		Number($final_price: intValue) from accumulate(
+				Item($p: finalPrice) from $items,
+				init(int total_discount = 0;),
+				action(total_discount += $p;),
+				reverse(total_discount -= $p;),
+				result(total_discount)
+		)
+	then
+		System.out.println("TOTAL CENA ZA RACUN IZNOSI: " + $r.getTotalPrice());
+		$r.setFinalPrice($final_price * (100 - $r.getDiscount())/100);
+		System.out.println("UKUPNA CENA ZA RACUN IZNOSI: " + $r.getFinalPrice());
+end
+

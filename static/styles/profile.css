@@ -1,0 +1,38 @@
+body {
+	background: #efefef;
+}
+
+.form-body {
+	background: #fff;
+	padding: 20px;
+}
+
+.innter-form {
+	padding-top: 20px;
+}
+
+.login-form {
+	background: rgba(255, 255, 255, 0.8);
+	padding: 20px;
+	border-top: 3px solid #3e4043;
+}
+
+.sa-innate-form input[type=text], input[type=password], input[type=file],
+	textarea, select, email {
+	font-size: 13px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	outline: none;
+	width: 100%;
+	margin: 8px 0;
+}
+
+.sa-innate-form p {
+	font-size: 13px;
+	padding-top: 10px;
+}
+
+.receipt:hover {
+	background-color: #e64b3b;
+	cursor: pointer;
+}

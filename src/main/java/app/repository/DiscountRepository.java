@@ -2,8 +2,8 @@ package app.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import app.models.Discount;
+import app.models.ReceiptDiscount;
 
-public interface DiscountRepository extends JpaRepository<Discount, Long> {
+public interface DiscountRepository extends JpaRepository<ReceiptDiscount, Long> {
 
 }

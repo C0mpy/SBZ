@@ -1,0 +1,181 @@
+//created on: 13.08.2017.
+package rules
+
+//list any import classes here.
+import app.models.Receipt;
+import app.models.ItemDiscount;
+import app.models.Item;
+import app.models.ArticleCategory;
+import app.models.Sale;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+//declare any global variables here
+global Date currentDate;
+
+
+rule "add 10% BASE ITEM discount if number of articles in item is >= 20 and articles are not 'Goods of Broad Consumption'"
+	agenda-group "discounts"
+
+    when 
+    	$r: Receipt($items: items)
+    	$i: Item(amount >= 20, article.getCategory().getName() != "Goods of Broad Consumption",
+    		article.getCategory().getSuperCategory() != null,
+    		article.getCategory().getSuperCategory().getName() != "Goods of Broad Consumption") from $items
+    then
+    	System.out.println("ITEM IMA 20 ARTIKALA KOJI NISU SIROKE POTROSNJE");
+    	$i.getDiscounts().add(new ItemDiscount(10, "BASE", "if you order over 20 articles of same type that dont belong to 'Goods of Broad Consumption' category, you get 10% discount", $i));
+		
+end
+
+rule "add 5% BASE ITEM discount if number of articles in item is >= 5 and articles are: TVs, Laptops, Audio and Video or Computer Peripherals"
+	agenda-group "discounts"
+
+    when 
+    	$r: Receipt($items: items)
+    	$i: Item(amount >= 5, article.getCategory().getName() in ("TVs", "Audio and Video Equipment", "Laptops", "Computer Peripherals")) from $items
+    then
+    	System.out.println("ITEM IMA 5 ARTIKALA KOJI SU TVs, Audio and Video, Laptops ili Computer Peripherals");
+    	$i.getDiscounts().add(new ItemDiscount(5, "BASE", "if you order over 5 articles in category TVs, Audio and Video, Laptops or Computer Peripherals, you get 5% discount", $i));
+		
+end
+
+rule "add 7% BASE ITEM discount if value of item is >= $50 and articles belong to 'Goods of Broad Consumption' category"
+	agenda-group "discounts"
+
+    when 
+    	$r: Receipt($items: items)
+    	$i: Item(totalPrice >= 50, 
+    		(
+    			(article.getCategory().getSuperCategory() != null &&
+    			article.getCategory().getSuperCategory().getName == "Goods of Broad Consumption")
+    		)
+    	) from $items
+    then
+    	System.out.println("VREDNOST ITEMA JE >= $50 I ARTIKLI SPADAJU U ROBU SIROKE POTROSNJE " + $i);
+    	$i.getDiscounts().add(new ItemDiscount(7, "BASE", "if you order articles in value over 50$ from the 'Goods of Broad Consumption' category, you get 7% discount", $i));
+		
+end
+
+rule "pick the best BASE discount"
+	agenda-group "discounts"
+	salience -1
+	
+	when 
+		Receipt($items: items)
+		$i: Item(discounts.size() > 1) from $items
+	then
+		System.out.println("PICKIN THE BEST DISCOUNT FOR: " + $i);
+		ArrayList<ItemDiscount> baseDiscounts = new ArrayList<ItemDiscount>();
+		for(ItemDiscount i : $i.getDiscounts())
+			if(i.getType().equals("BASE"))
+				baseDiscounts.add(i);
+		
+		$i.getDiscounts().removeAll(baseDiscounts);
+	
+		ItemDiscount best = baseDiscounts.get(0);
+		for(ItemDiscount i : baseDiscounts) {
+			if(i.getDiscount() > best.getDiscount())
+				best = i;
+		}
+		
+		$i.getDiscounts().add(best);
+		System.out.println("BEST IS: " + $i);
+
+end
+
+rule "add 2% ADDITIONAL discount if you bought the same item in the last 15 days"
+	agenda-group "discounts"
+	
+	when 
+		Receipt($items_in_receipt: items, $all_customers_receipts: customer.getReceipts())
+		$receipt_in_last_two_weeks: Receipt(
+			date.getTime() > (currentDate.getTime() - TimeUnit.DAYS.toMillis(15)),
+			state != "NEW", 
+			$items_from_receipt_in_last_two_weeks: items) from $all_customers_receipts
+		$item_in_last_two_weeks: Item() from $items_from_receipt_in_last_two_weeks
+		$i: Item(article.getName() == $item_in_last_two_weeks.getArticle().getName()) from $items_in_receipt
+	then
+		System.out.println("KUPILI STE ISTI ARTIKAL U POSLEDNJIH 15 DANA, 2% POPUST");
+		$i.getDiscounts().add(new ItemDiscount(2, "ADDITIONAL", "if you ordered article from this item in the last 2 weeks, you get 2% discount", $i));
+
+end
+
+rule "add 1% ADDITIONAL discount if you bought an item from the same category in the last 30 days"
+	agenda-group "discounts"
+	
+	when 
+		Receipt($items_in_receipt: items, $all_customers_receipts: customer.getReceipts())
+		$receipt_in_last_month: Receipt(
+			date.getTime() > (currentDate.getTime() - TimeUnit.DAYS.toMillis(30)),
+			state != "NEW", 
+			$items_from_receipt_in_last_month: items) from $all_customers_receipts
+		Item($category_in_last_month: article.getCategory()) from $items_from_receipt_in_last_month
+		$i: Item(article.getCategory().getName() == $category_in_last_month.getName()) from $items_in_receipt
+	then
+		System.out.println("KUPILI STE ARTIKAL IZ ISTE KATEGORIJE U POSLEDNJIH 30 DANA, 1% POPUST");
+		$i.getDiscounts().add(new ItemDiscount(1, "ADDITIONAL", "if you ordered article from the same category in the last month, you get 1% discount", $i));
+
+end
+
+rule "add discount if article is on sale"
+	agenda-group "discounts"
+	
+	when 
+		Receipt($items_in_receipt: items)
+		$i: Item($article_category: article.getCategory(), $sales_for_item: article.getCategory().getSales()) from $items_in_receipt
+		$sale: Sale(fromDate.getTime() < currentDate.getTime(), toDate.getTime() > currentDate.getTime()) from $sales_for_item
+	then
+		System.out.println("ARTIKAL JE NA SEZONSKOJ AKCIJI " + $sale.getDiscount() + "% POPUST");
+		$i.getDiscounts().add(new ItemDiscount($sale.getDiscount(), "ADDITIONAL", $sale.getName(), $i));
+
+end
+
+rule "calculate final discount, limit if it its over maximal for a category, calculate final price"
+	agenda-group "discounts"
+	salience -2
+	
+	when 
+		Receipt($items_in_receipt: items)
+		$i: Item($item_discounts: discounts, $max_discount: article.getCategory().getMaxDiscount()) from $items_in_receipt
+		Number($max_discount < $r: intValue) from accumulate(
+				ItemDiscount($d: discount) from $item_discounts,
+				init(int total_discount = 0;),
+				action(total_discount += $d;),
+				reverse(total_discount -= $d;),
+				result(total_discount)
+		)
+	then
+		System.out.println("TOTAL CENA ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $i.getTotalPrice());
+		System.out.println("UKUPAN POPUST ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $max_discount);
+		$i.setDiscount($max_discount);
+		$i.setFinalPrice($i.getTotalPrice() * (100 - $max_discount)/100);
+		System.out.println("UKUPNA CENA ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $i.getFinalPrice());
+end
+
+rule "calculate final discount, dont limit if it its under maximal for a category, calculate final price"
+	agenda-group "discounts"
+	salience -2
+	
+	when 
+		Receipt($items_in_receipt: items)
+		$i: Item($item_discounts: discounts, $max_discount: article.getCategory().getMaxDiscount()) from $items_in_receipt
+		Number($max_discount > $r: intValue) from accumulate(
+				ItemDiscount($d: discount) from $item_discounts,
+				init(int total_discount = 0;),
+				action(total_discount += $d;),
+				reverse(total_discount -= $d;),
+				result(total_discount)
+		)
+	then
+		System.out.println("TOTAL CENA ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $i.getTotalPrice());
+		System.out.println("UKUPAN POPUST ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $r);
+		if($r == 0)
+			$i.setFinalPrice($i.getTotalPrice());
+		else {
+			$i.setDiscount($r);
+			$i.setFinalPrice($i.getTotalPrice() * (100 - $r)/100);
+		}
+		System.out.println("UKUPNA CENA ZA ARTIKL: " + $i.getArticle().getName() + " IZNOSI: " + $i.getFinalPrice());
+end

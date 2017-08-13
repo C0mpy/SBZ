@@ -1,0 +1,158 @@
+<div class="jumbotron">
+	<div class="container text-center">
+		<h1>Online Store</h1>
+		<p>Mission, Vission & Values</p>
+	</div>
+</div>
+
+<nav class="navbar navbar-inverse">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target="#myNavbar">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Logo</a>
+		</div>
+		<div class="collapse navbar-collapse" id="myNavbar">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Home</a></li>
+				<li><a href="#">Products</a></li>
+				<li><a href="#">Deals</a></li>
+				<li><a href="#">Stores</a></li>
+				<li><a href="#">Contact</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="" ng-click="customerCtrl.goTo('profile')"><span
+						class="glyphicon glyphicon-user"></span>&nbsp{{customerCtrl.user.username;}}</a></li>
+				<li><a href="" ng-click="customerCtrl.goTo('cart')"><span class="glyphicon glyphicon-shopping-cart"></span>&nbsp<span class="badge" style="color:yellow">{{customerCtrl.receipt.items.length}}</span></a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading text-center">Search Articles</div>
+		<div class="panel-body">
+			<div class="text-center">
+				<form class="form-inline">
+					<div class="form-group">
+						<input type="text" class="form-control" 
+							ng-model="customerCtrl.code" placeholder="Code">
+						<input type="text" class="form-control"
+							ng-model="customerCtrl.name" placeholder="Name"> 
+						<input type="number" class="form-control" min="0" max="{{customerCtrl.maxPrice}}"
+							ng-model="customerCtrl.minPrice" placeholder="Min Price">
+						<input type="number" class="form-control" min="{{customerCtrl.minPrice}}"
+							ng-model="customerCtrl.maxPrice" placeholder="Max Price"><br>
+						<select class="form-control" name="color"ng-model="customerCtrl.category">
+							<option value="" selected hidden>Choose a category</option>
+							<option value="Goods of Broad Consumption">Goods of Broad Consumption</option>
+							<option value="New Years Decoration">New Years Decoration</option>
+							<option value="Sports, Camping and Gardening Equipment">Sports, Camping and Gardening Equipment</option>
+							<option value="Cooking and Barbecue Equipment">Cooking and Barbecue Equipment</option>
+							<option value="Audio and Video Equipment">Audio and Video Equipment</option>
+							<option value="Laptops">Laptops</option>
+							<option value="Computer Peripherals">Computer Peripherals</option>
+							<option value="Alcoholic Beverages">Alcoholic Beverages</option>
+							<option value="Toys">Toys</option>
+							<option value="Clothes and Shoes">Clothes and Shoes</option>
+							<option value="Watch, Jewelry and Accessories">Watch, Jewelry and Accessories</option>
+							<option value="Furniture">Furniture</option>
+							<option value="Food and Beverages">Food and Beverages</option>
+							<option value="Cosmetics">Cosmetics</option>
+							<option value="Cleaning Products">Cleaning Products</option>
+							<option value="Appliances">Appliances</option>
+						</select>
+	
+						<button class="btn btn-success" ng-click="customerCtrl.filter()">Filter</button>
+					</div>
+				</form>
+			</div><br>
+			<div>
+				<button ng-click="customerCtrl.currentFilter.code = null;  customerCtrl.code = null; customerCtrl.getPage() " class="btn btn-warning" type="button" style="font-size : 10px" ng-show="customerCtrl.currentFilter.code">
+				Code: {{customerCtrl.currentFilter.code}}&nbsp<span class="glyphicon glyphicon-remove"></span>
+				</button>
+				<button ng-click="customerCtrl.currentFilter.name = null; customerCtrl.name = null; customerCtrl.getPage()" class="btn btn-warning" type="button" style="font-size : 10px" ng-show="customerCtrl.currentFilter.name">
+				Name: {{customerCtrl.currentFilter.name}}&nbsp<span class="glyphicon glyphicon-remove"></span>
+				</button>
+				<button ng-click="customerCtrl.currentFilter.minPrice = null; customerCtrl.minPrice = null; customerCtrl.getPage()" class="btn btn-warning" type="button" style="font-size : 10px" ng-show="customerCtrl.currentFilter.minPrice">
+				Min Price: {{customerCtrl.currentFilter.minPrice}}&nbsp<span class="glyphicon glyphicon-remove"></span>
+				</button>
+				<button ng-click="customerCtrl.currentFilter.maxPrice = null; customerCtrl.maxPrice = null; customerCtrl.getPage()" class="btn btn-warning" type="button" style="font-size : 10px" ng-show="customerCtrl.currentFilter.maxPrice">
+				Max Price: {{customerCtrl.currentFilter.maxPrice}}&nbsp<span class="glyphicon glyphicon-remove"></span>
+				</button>
+				<button ng-click="customerCtrl.removeFilter('category')" class="btn btn-warning" type="button" 
+				style="font-size : 10px" ng-show="customerCtrl.currentFilter.category">
+				Category: {{customerCtrl.currentFilter.category}}&nbsp<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+<br>
+
+<div class="container">
+	<div class="row">
+		<div ng-repeat="article in customerCtrl.artOne" class="col-sm-4">
+			<div class="panel panel-primary">
+				<div ng-show="customerCtrl.checkSale(article)" class="panel-heading" style="color:yellow">
+					On Sale!
+				</div>
+				<div height="330px" class="panel-body">
+					<img height="330px" ng-src="{{article.picture}}">
+				</div>
+				<div class="panel-footer">
+					<h4>{{article.name}}</h4>
+					<h4>code: <i>{{article.code}}</i></h4>
+					<h5><b>US$ {{article.price}}</b></h5>
+					<button class="btn btn-primary btn-block" ng-click="customerCtrl.orderArticle(article)">Order</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<br>
+<div class="container">
+	<div class="row">
+		<div ng-repeat="article in customerCtrl.artTwo" class="col-sm-4">
+			<div class="panel panel-primary">
+				<div ng-show="customerCtrl.checkSale(article)" class="panel-heading" style="color:yellow">
+					On Sale!
+				</div>
+				<div height="330px" class="panel-body">
+					<img height="330px" ng-src="{{article.picture}}">
+				</div>
+				<div class="panel-footer">
+					<h4>{{article.name}}</h4>
+					<h4>code: <i>{{article.code}}</i></h4>
+					<div ng-if="article.category.sales[0]">
+						<h5><b>US$ <span style="color:red"><strike>{{article.price}}</strike> </span><span style="color:green">{{(article.price * article.category.sales[0]['discount'] / 100).toFixed(2)}}</span></b></h5>
+					</div>
+					<h5 ng-if="!article.category.sales[0]"><b>US$ {{article.price}}</b></h5>
+					<button class="btn btn-primary btn-block" ng-click="customerCtrl.orderArticle(article)">Order</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><br>
+
+<div style="text-align: center">
+	<ul uib-pagination items-per-page="6"
+		total-items="customerCtrl.numberArticles"
+		ng-model="customerCtrl.currentPage" ng-change="customerCtrl.getPage()"
+		class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul>
+</div>
+<br>
+
+<footer class="container-fluid text-center">
+	<p>Online Store Copyright</p>
+	<form class="form-inline">
+		Get deals: <input type="email" class="form-control" size="50"
+			placeholder="Email Address">
+		<button type="button" class="btn btn-danger">Sign Up</button>
+	</form>
+</footer>
