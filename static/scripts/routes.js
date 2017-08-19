@@ -31,6 +31,15 @@ angular
             	controller: "cartController",
             	controllerAs: "cartCtrl"
             })
+            .when("/receipt", {
+            	templateUrl: "../receipt.html",
+            	controller: "receiptController",
+            	controllerAs: "receiptCtrl",
+            	css: "../styles/receipt.css"
+            })
+            .when("/salesman", {
+            	
+            })
             .otherwise({
                 redirectTo: "/"
             });

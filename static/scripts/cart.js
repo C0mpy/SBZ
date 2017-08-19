@@ -16,7 +16,8 @@
         function calculateDiscounts() {
         	var receipt = {"code" : vm.receipt.code, "date" : vm.receipt.date, "customer" : vm.receipt.customer, "totalPrice" : vm.receipt.totalPrice, "items" : vm.receipt.items};
         	$http.post("/api/customer/calculateDiscounts", {"message" : vm.receipt.code}).then(function(response) {
-    			console.log(response.data);
+    			$sessionStorage.receipt = response.data;
+    			vm.goTo("receipt");
             });
         }
         

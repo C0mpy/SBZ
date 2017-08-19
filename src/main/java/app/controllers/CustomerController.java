@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.tools.ant.taskdefs.Sleep;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.dto.ItemDTO;
 import app.dto.MessageDTO;
+import app.dto.OrderDTO;
 import app.dto.ReceiptDTO;
 import app.models.Article;
 import app.models.ArticleCategory;
 import app.models.Customer;
 import app.models.Item;
+import app.models.ItemDiscount;
 import app.models.Receipt;
+import app.models.ReceiptDiscount;
+import app.models.SpendingLimit;
 import app.repository.ArticleCategoryRepository;
 import app.repository.ArticleRepository;
+import app.repository.ItemDiscountRepository;
 import app.repository.ItemRepository;
+import app.repository.ReceiptDiscountRepository;
 import app.repository.ReceiptRepository;
 import app.repository.UserRepository;
 
@@ -51,6 +58,12 @@ public class CustomerController {
 	@Autowired
 	private ArticleCategoryRepository articleCategoryRepository;
 	
+	@Autowired
+	private ItemDiscountRepository itemDiscountRepository;
+	
+	@Autowired
+	private ReceiptDiscountRepository receiptDiscountRepository;
+	
 	@RequestMapping(value = "/{customerId}/findReceipts", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity findReceipts(@PathVariable Long customerId) {
 		
@@ -73,7 +86,10 @@ public class CustomerController {
 		Customer customer = (Customer) userRepository.findOneCustomerById(Long.valueOf(messageDTO.getMessage()));
 		Receipt receipt = new Receipt(customer);
 		
+		customer.getReceipts().add(receipt);
+		
 		receipt = receiptRepository.save(receipt);
+		userRepository.save(customer);
 		return new ResponseEntity(receipt, HttpStatus.OK);
     }
 	
@@ -120,8 +136,7 @@ public class CustomerController {
 	@RequestMapping(value = "/calculateDiscounts", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity calculateDiscounts(@RequestBody MessageDTO messageDTO) {
 		Receipt receipt = receiptRepository.findOneByCode(messageDTO.getMessage());
-		List<Receipt> receipts = receiptRepository.findAllByCustomerId(receipt.getCustomer().getId());
-		receipt.getCustomer().setReceipts(receipts);
+
 		KieSession kieSession = kieContainer.newKieSession("ShopSession");
 		kieSession.insert(receipt);
 		
@@ -129,6 +144,37 @@ public class CustomerController {
 		kieSession.getAgenda().getAgendaGroup("discounts").setFocus();
 		kieSession.fireAllRules();
 		System.out.println(receipt);
+		
+		kieSession.getAgenda().getAgendaGroup("points").setFocus();
+		kieSession.fireAllRules();
+		
+		double finalPrice = receipt.getFinalPrice();
+		int points = 0;
+		
+		// set earned points for a receipt
+		for(SpendingLimit sl : receipt.getCustomer().getCategory().getLimits()) {
+			if (finalPrice > sl.getFromLimit() && finalPrice < sl.getToLimit()) {
+				points = (int) (finalPrice * sl.getPriceToPoints() / 100);
+				receipt.setEarnedPoints(points);
+			}
+		}
+		
+		receiptRepository.save(receipt);
+		return new ResponseEntity(receipt, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/order", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity order(@RequestBody OrderDTO orderDTO) {
+		System.out.println(orderDTO);
+		
+		Receipt receipt = receiptRepository.findOneByCode(orderDTO.getReceiptCode());
+		
+		receipt.setSpentPoints(orderDTO.getPoints());
+		double price = receipt.getFinalPrice();
+		receipt.setFinalPrice(price - orderDTO.getPoints() * 10);
+		receipt.setState("ORDERED");
+		receiptRepository.save(receipt);
+
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
@@ -142,5 +188,6 @@ public class CustomerController {
 		
 		return sum;
 	}
+
 
 }

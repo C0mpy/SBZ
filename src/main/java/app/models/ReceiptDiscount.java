@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class ReceiptDiscount {
@@ -18,7 +21,8 @@ public class ReceiptDiscount {
 	int discount;
 	String type;
 	String description;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonBackReference
 	Receipt receipt;
 	
 	public ReceiptDiscount() {
@@ -31,7 +35,7 @@ public class ReceiptDiscount {
 		this.discount = discount;
 		this.type = type;
 		this.description = description;
-		this.receipt = receipt;
+		this.receipt= receipt;
 	}
 
 	public ReceiptDiscount(int discount, String type, String description, Receipt receipt) {
@@ -87,7 +91,7 @@ public class ReceiptDiscount {
 	public String toString() {
 		return "ReceiptDiscount [code=" + code + ", discount=" + discount + ", type=" + type + ", description="
 				+ description + "]";
-	}
+	}	
 	
 	
 }

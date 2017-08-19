@@ -1,0 +1,20 @@
+//created on: 14.08.2017.
+package rules
+
+//list any import classes here.
+import app.models.Receipt;
+import app.models.SpendingLimit;
+
+//declare any global variables here
+
+rule "Add points to the Receipt"
+	agenda-group "points"
+	
+    when
+        $receipt: Receipt($finalPrice: finalPrice, $spendingLimits: customer.getCategory().getLimits())
+        SpendingLimit(fromLimit < $finalPrice, toLimit > $finalPrice, $ratio: priceToPoints) from $spendingLimits
+    then
+        int extraPoints = (int)($finalPrice * $ratio / 100);
+		$receipt.setEarnedPoints(extraPoints);
+		System.out.println("YOU EARNED DIS MANY POINTS: " + extraPoints);
+end

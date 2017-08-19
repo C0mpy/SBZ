@@ -2,10 +2,15 @@ package app.models;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -16,7 +21,8 @@ public class Customer extends User {
 	int points;
 	@ManyToOne
 	Category category;
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
+	@JsonBackReference
 	List<Receipt> receipts;
 	
 	public Customer() {
@@ -73,6 +79,9 @@ public class Customer extends User {
 
 	@Override
 	public String toString() {
-		return "Customer [address=" + address + ", points=" + points + ", category=" + category + "]";
+		return "Customer [address=" + address + ", points=" + points + ", category=" + category + ", receipts="
+				+ receipts + "]";
 	}
+
+	
 }

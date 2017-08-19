@@ -129,10 +129,7 @@
 				<div class="panel-footer">
 					<h4>{{article.name}}</h4>
 					<h4>code: <i>{{article.code}}</i></h4>
-					<div ng-if="article.category.sales[0]">
-						<h5><b>US$ <span style="color:red"><strike>{{article.price}}</strike> </span><span style="color:green">{{(article.price * article.category.sales[0]['discount'] / 100).toFixed(2)}}</span></b></h5>
-					</div>
-					<h5 ng-if="!article.category.sales[0]"><b>US$ {{article.price}}</b></h5>
+					<h5><b>US$ {{article.price}}</b></h5>
 					<button class="btn btn-primary btn-block" ng-click="customerCtrl.orderArticle(article)">Order</button>
 				</div>
 			</div>

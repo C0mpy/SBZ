@@ -5,7 +5,6 @@
 
         var vm = this;
         vm.article = $sessionStorage.article;
-        console.log(vm.article);
         vm.ammount = 1;
         vm.user = $sessionStorage.user;
         vm.receipt = $sessionStorage.receipt;

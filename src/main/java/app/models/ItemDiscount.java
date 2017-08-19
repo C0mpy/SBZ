@@ -3,10 +3,13 @@ package app.models;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class ItemDiscount {
@@ -16,7 +19,8 @@ public class ItemDiscount {
 	int discount;
 	String type;
 	String description;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonBackReference
 	Item item;
 	
 	public ItemDiscount() {
