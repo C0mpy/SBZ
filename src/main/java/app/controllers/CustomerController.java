@@ -2,9 +2,7 @@ package app.controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.apache.tools.ant.taskdefs.Sleep;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import app.dto.ItemDTO;
 import app.dto.MessageDTO;
 import app.dto.OrderDTO;
-import app.dto.ReceiptDTO;
 import app.models.Article;
-import app.models.ArticleCategory;
 import app.models.Customer;
 import app.models.Item;
-import app.models.ItemDiscount;
 import app.models.Receipt;
-import app.models.ReceiptDiscount;
 import app.models.SpendingLimit;
-import app.repository.ArticleCategoryRepository;
 import app.repository.ArticleRepository;
-import app.repository.ItemDiscountRepository;
 import app.repository.ItemRepository;
-import app.repository.ReceiptDiscountRepository;
 import app.repository.ReceiptRepository;
 import app.repository.UserRepository;
 
@@ -54,15 +45,6 @@ public class CustomerController {
 	
 	@Autowired
 	private KieContainer kieContainer;
-	
-	@Autowired
-	private ArticleCategoryRepository articleCategoryRepository;
-	
-	@Autowired
-	private ItemDiscountRepository itemDiscountRepository;
-	
-	@Autowired
-	private ReceiptDiscountRepository receiptDiscountRepository;
 	
 	@RequestMapping(value = "/{customerId}/findReceipts", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity findReceipts(@PathVariable Long customerId) {
@@ -143,7 +125,6 @@ public class CustomerController {
 		kieSession.setGlobal("currentDate", new Date());
 		kieSession.getAgenda().getAgendaGroup("discounts").setFocus();
 		kieSession.fireAllRules();
-		System.out.println(receipt);
 		
 		kieSession.getAgenda().getAgendaGroup("points").setFocus();
 		kieSession.fireAllRules();

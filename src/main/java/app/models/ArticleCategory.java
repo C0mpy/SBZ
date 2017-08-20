@@ -1,5 +1,6 @@
 package app.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,7 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.OneToOne;
+
+import app.dto.ArticleCategoryDTO;
 
 @Entity
 public class ArticleCategory {
@@ -32,16 +34,16 @@ public class ArticleCategory {
 	public ArticleCategory() {
 		super();
 	}
-
-	public ArticleCategory(String code, String name, int maxDiscount, List<Article> articles,
-			ArticleCategory superCategory, List<Sale> sales) {
+						
+	public ArticleCategory(String code, String name, int maxDiscount, ArrayList<Article> articles,
+			ArticleCategory superCategory, ArrayList<Sale> arrayList) {
 		super();
 		this.code = code;
 		this.name = name;
 		this.maxDiscount = maxDiscount;
 		this.articles = articles;
 		this.superCategory = superCategory;
-		this.sales = sales;
+		this.sales = arrayList;
 	}
 
 	public String getCode() {

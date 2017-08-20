@@ -8,6 +8,8 @@
         vm.login = login;
         vm.register = register;
         vm.showPicker = showPicker;
+        vm.goTo = goTo;
+        
         vm.picture = "https://cdn.filestackcontent.com/XdxMB5qmSrashXV7JhFk";
         vm.errorUsernamePassword = false;
         vm.client = filestack.init('AKU3MhzicQTiwDpMd8Lx9z');
@@ -18,15 +20,19 @@
             	$sessionStorage.user = response.data.user;
             	vm.errorUsernamePassword = false;
             	if(response.data.user.type == "Salesman")
-            		console.log("go to salesman");
+            		vm.goTo("salesman")
             	else if(response.data.user.type == "Manager")
-            		console.log("go to manager");
+            		vm.goTo("manager");
             	else
-            		$location.path("/customer");
+            		vm.goTo("customer");
             }, function(error) {
             	vm.errorUsernamePassword = true;
             });
         };
+        
+        function goTo(path) {
+        	$location.path('/' + path.toLowerCase());
+        }
         
         function register() {  
         	$http.post("/api/user/register", {"username": vm.registerUsername, "password": vm.registerPassword, "firstName" : vm.firstname,

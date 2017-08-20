@@ -1,0 +1,18 @@
+package rules
+
+import app.models.Article;
+import java.util.ArrayList;
+
+global ArrayList<Article> result;
+
+rule "if count is less than minCount set Article add Article to the result List"
+	agenda-group "supplies"
+
+    when 
+    	$a: Article(minCount > count)
+    then
+    	System.out.println("OVAJ ARTICLE TI JE MALO TANAK SA ZALIHAMA: " + $a);
+    	$a.setOrdered(true);
+    	result.add($a);
+		
+end

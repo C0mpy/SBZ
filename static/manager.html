@@ -1,0 +1,137 @@
+<div class="container">
+	<br>
+	<br>
+	<uib-tabset active="activeJustified" justified="true"> 
+		<uib-tab index="0" heading="User Categories">
+			<h3>User Categories:</h3>
+			<uib-accordion close-others="oneAtATime">
+				<div uib-accordion-group class="panel-success" ng-repeat="category in managerCtrl.categories">
+					<uib-accordion-heading>
+						<table width="100%">
+							<tr>
+								<th width="50%">Code</th>
+								<th width="50%">Name</th>
+							</tr>
+							<tr>
+								<td>{{category.code}}</td>
+								<td>{{category.name}}</td>
+							</tr>
+						</table>
+					</uib-accordion-heading>
+					<table class="table" ng-if="category.limits.length != 0">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>From Price</th>
+								<th>To Price</th>
+								<th>Price to Points Percentage</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="limit in category.limits">
+								<td>{{limit.id}}</td>
+								<td><input type="number" class="form-control" ng-model="limit.fromLimit" min="0" max="{{limit.toLimit}}"></td>
+								<td><input type="number" class="form-control" ng-model="limit.toLimit" min="{{limit.fromLimit}}"></td>
+								<td><input type="number" class="form-control" ng-model="limit.priceToPoints" min="0"></td>
+							</tr>
+							<tr>
+								<td><button class="btn btn-primary" ng-click="managerCtrl.saveLimits()">Save</button></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</uib-accordion><br>
+		</uib-tab>
+		<uib-tab index="1" heading="Article Categories">
+			<h4>Add New Article Category:</h4>&nbsp&nbsp
+			<form class="form-inline">
+				<div class="form-group">
+					<label for="code">Code:</label>
+					<input type="text" class="form-control" id="code" ng-model="managerCtrl.newArticleCategoryCode">
+				</div>&nbsp&nbsp
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type="text" class="form-control" id="name" ng-model="managerCtrl.newArticleCategoryName">
+				</div>&nbsp&nbsp
+				<div class="form-group">
+					<label for="maxDiscount">Max Discount:</label>
+					<input type="number" class="form-control" id="maxDiscount" min="0" ng-model="managerCtrl.newArticleCategoryMaxDiscount">
+				</div>&nbsp&nbsp
+				<button class="btn btn-success" ng-click="managerCtrl.addArticleCategory()">Add</button>
+			</form>
+			<h3>Article Categories:</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Max Discount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="category in managerCtrl.articleCategories">
+						<td>{{category.code}}</td>
+						<td><input type="text" class="form-control" ng-model="category.name"></td>
+						<td><input type="number" class="form-control" ng-model="category.maxDiscount"></td>
+					</tr>
+					<tr>
+						<td><button class="btn btn-primary" ng-click="managerCtrl.saveArticleCategories()">Save</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</uib-tab>
+		<uib-tab index="2" heading="Sales">
+			<h4>Add New Sale:</h4>
+			<form class="form">
+				<div class="form-group">
+					<label for="code">Code:</label>
+					<input type="text" class="form-control" id="code" ng-model="managerCtrl.newSaleCode">
+				</div>
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type="text" class="form-control" id="name" ng-model="managerCtrl.newSaleName">
+				</div>
+				<div class="form-group">
+					<label for="startDate">Start Date:</label>
+					<input type="date" class="form-control" id="startDate" ng-model="managerCtrl.newSaleStartDate">
+				</div>
+				<div class="form-group">
+					<label for="endDate">End Date:</label>
+					<input type="date" class="form-control" id="endDate" ng-model="managerCtrl.newSaleEndDate">
+				</div>
+				<div class="form-group">
+					<label for="discount">Discount:</label>
+					<input type="number" class="form-control" id="discount" ng-model="managerCtrl.newSaleDiscount">
+				</div>
+				<label class="checkbox-inline" ng-repeat="category in managerCtrl.articleCategories">
+					<input type="checkbox" value="{{category.name}}" ng-model="managerCtrl.checkboxes[category.code]">{{category.name}}
+				</label><br>
+				<button class="btn btn-success" ng-click="managerCtrl.addSale()">Add</button>
+			</form>
+			<h3>Sales:</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Start Date</th>
+						<th>End Date</th>
+						<th>Discount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="sale in managerCtrl.sales">
+						<td>{{sale.code}}</td>
+						<td><input type="text" class="form-control" ng-model="sale.name"></td>
+						<td><input type="date" class="form-control" ng-model="sale.fromDate"></td>
+						<td><input type="date" class="form-control" ng-model="sale.toDate"></td>
+						<td><input type="number" class="form-control" ng-model="sale.discount"></td>
+					</tr>
+					<tr>
+						<td><button class="btn btn-primary" ng-click="managerCtrl.saveSales()">Save</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</uib-tab>
+	</uib-tabset>
+</div>

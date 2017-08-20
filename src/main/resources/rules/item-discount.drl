@@ -73,15 +73,16 @@ rule "pick the best BASE discount"
 				baseDiscounts.add(i);
 		
 		$i.getDiscounts().removeAll(baseDiscounts);
-	
-		ItemDiscount best = baseDiscounts.get(0);
-		for(ItemDiscount i : baseDiscounts) {
-			if(i.getDiscount() > best.getDiscount())
-				best = i;
+		if(baseDiscounts.size() != 0) {
+			ItemDiscount best = baseDiscounts.get(0);
+			for(ItemDiscount i : baseDiscounts) {
+				if(i.getDiscount() > best.getDiscount())
+					best = i;
+			}
+			
+			$i.getDiscounts().add(best);
 		}
-		
-		$i.getDiscounts().add(best);
-		System.out.println("BEST IS: " + $i);
+		System.out.println("BEST BASE DISCOUNT IS: " + $i);
 
 end
 

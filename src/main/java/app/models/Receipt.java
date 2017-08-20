@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import app.dto.ReceiptDTO;
 
 @Entity

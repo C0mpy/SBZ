@@ -1,5 +1,6 @@
 package app.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -33,5 +34,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 			@Param("category") String category, @Param("status") String status);
 	
 	Article findOneByCode(String code);
+	
+	ArrayList<Article> findAllByStatus(String status);
 
 }

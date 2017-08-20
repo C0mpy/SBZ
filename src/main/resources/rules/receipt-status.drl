@@ -1,0 +1,19 @@
+package rules
+
+import app.models.Article;
+import app.models.Receipt;
+import app.models.Item;
+import java.util.ArrayList;
+
+global ArrayList<Article> result;
+
+rule "if receipt contains an item that contains an article low on supplies, refuse the receipt order"
+	agenda-group "receipt-status"
+	
+    when
+        Receipt($items: items)
+        $i: Item(article.getCount() - amount < 0) from $items
+    then
+        result.add($i);
+
+end

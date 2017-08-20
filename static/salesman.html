@@ -1,0 +1,102 @@
+<div class="container">
+	<br>
+	<br>
+	<uib-tabset active="activeJustified" justified="true"> 
+		<uib-tab index="0" heading="Order Articles">
+			<h3>Articles low on supply:</h3><br>
+			<div class="container">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Code</th>
+							<th>Name</th>
+							<th>Amount</th>
+							<th>Minimal Amount</th>
+							<th>Amount to Order</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="article in salesmanCtrl.articles">
+							<td>{{article.code}}</td>
+							<td>{{article.name}}</td>
+							<td>{{article.count}}</td>
+							<td>{{article.minCount}}</td>
+							<td><input type="number" class="form-control" ng-model="article.amount" min="0"></td>
+							<td><button class="btn btn-primary"	ng-click="salesmanCtrl.order(article.code, article.amount)">Order</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</uib-tab> 
+		<uib-tab index="1" heading="Receipts"><br>
+			<form class="form-inline">
+				<div class="form-group">
+			    	<label>Filter Receipts by status:</label>&nbsp&nbsp
+			    	<select class="form-control" ng-model="salesmanCtrl.receiptStatus" ng-change="salesmanCtrl.getReceipts()")>
+						<option>NEW</option>
+				    	<option>ORDERED</option>
+				    	<option>REJECTED</option>
+				    	<option>ACCEPTED</option>
+				 	</select>
+			  	</div>
+			</form><br><br>
+			<table ng-show="salesmanCtrl.receiptStatus == 'ORDERED'" class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>User</th>
+						<th>Date</th>
+						<th>Total Price</th>
+						<th>Discount</th>
+						<th>Final Price</th>
+						<th>Spent Points</th>
+						<th>Earned Points</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="receipt in salesmanCtrl.receipts">
+						<td>{{receipt.code}}</td>
+						<td>{{receipt.customer.username}}>
+						<td>{{receipt.date | date:'medium'}}</td>
+						<td>{{receipt.totalPrice}}$</td>
+						<td>{{receipt.discount}}%</td>
+						<td>{{receipt.finalPrice}}$</td>
+						<td>{{receipt.spentPoints}}</td>
+						<td>{{receipt.earnedPoints}}</td>
+						<td><button class="btn btn-danger" ng-click="salesmanCtrl.reject(receipt.code)">Reject</button></td>
+						<td><button class="btn btn-success" ng-click="salesmanCtrl.accept(receipt.code)">Accept</button></td>
+					</tr>
+				</tbody>
+			</table>
+			<table ng-show="salesmanCtrl.receiptStatus != 'ORDERED'" class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>User</th>
+						<th>Date</th>
+						<th>Total Price</th>
+						<th>Discount</th>
+						<th>Final Price</th>
+						<th>Spent Points</th>
+						<th>Earned Points</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="receipt in salesmanCtrl.receipts">
+						<td>{{receipt.code}}</td>
+						<td>{{receipt.customer.username}}</td>
+						<td>{{receipt.date | date:'medium'}}</td>
+						<td>{{receipt.totalPrice}}$</td>
+						<td>{{receipt.discount}}%</td>
+						<td>{{receipt.finalPrice}}$</td>
+						<td>{{receipt.spentPoints}}</td>
+						<td>{{receipt.earnedPoints}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</uib-tab> 
+	</uib-tabset>
+</div>

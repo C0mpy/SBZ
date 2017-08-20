@@ -1,11 +1,10 @@
 package app.models;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+
+import app.dto.LimitDTO;
 
 @Entity
 public class SpendingLimit {
@@ -28,6 +27,13 @@ public class SpendingLimit {
 		this.fromLimit = fromLimit;
 		this.toLimit = toLimit;
 		this.priceToPoints = priceToPoints;
+	}
+	
+	public SpendingLimit(LimitDTO limit) {
+		this.id = (long) limit.getId();
+		this.fromLimit = limit.getFromLimit();
+		this.toLimit = limit.getFromLimit();
+		this.priceToPoints = limit.getPriceToPoints();
 	}
 
 	public Long getId() {

@@ -11,6 +11,8 @@
         vm.goTo = goTo;
         vm.order = order;
         
+        vm.spentPoints = 0;
+        
         function goTo(path) {
         	$location.path('/' + path.toLowerCase());
         }
@@ -20,7 +22,7 @@
         	
         	$http.post("/api/customer/order", request).then(function(response) {
     			vm.goTo("customer"); 
-    			$sessionStorage.removeItem("receipt");
+    			delete $sessionStorage.receipt;
             });
 
         }

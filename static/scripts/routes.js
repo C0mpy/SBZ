@@ -38,7 +38,14 @@ angular
             	css: "../styles/receipt.css"
             })
             .when("/salesman", {
-            	
+            	templateUrl: "../salesman.html",
+            	controller: "salesmanController",
+            	controllerAs: "salesmanCtrl"
+            })
+            .when("/manager", {
+            	templateUrl: "../manager.html",
+            	controller: "managerController",
+            	controllerAs: "managerCtrl"
             })
             .otherwise({
                 redirectTo: "/"
