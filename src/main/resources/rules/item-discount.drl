@@ -20,12 +20,13 @@ rule "add 10% BASE ITEM discount if number of articles in item is >= 20 and arti
 
     when 
     	$r: Receipt($items: items)
-    	$i: Item(amount >= 20, article.getCategory().getName() != "Goods of Broad Consumption",
-    		article.getCategory().getSuperCategory() != null,
-    		article.getCategory().getSuperCategory().getName() != "Goods of Broad Consumption") from $items
+    	$i: Item(amount >= 20 && article.getCategory().getName() != "Goods of Broad Consumption" &&
+    		((article.getCategory().getSuperCategory() == null) ||
+    		 (article.getCategory().getSuperCategory().getName() != "Goods of Broad Consumption"))
+    		) from $items
     then
     	System.out.println("ITEM IMA 20 ARTIKALA KOJI NISU SIROKE POTROSNJE");
-    	$i.getDiscounts().add(new ItemDiscount(10, "BASE", "if you order over 20 articles of same type that dont belong to 'Goods of Broad Consumption' category, you get 10% discount", $i));
+    	$i.getDiscounts().add(new ItemDiscount(10, "BASE", "if you order over 20 articles of same type that dont belong to 'Goods of Broad Consumption' category, you get 10% BASE discount", $i));
 		
 end
 
@@ -37,7 +38,7 @@ rule "add 5% BASE ITEM discount if number of articles in item is >= 5 and articl
     	$i: Item(amount >= 5, article.getCategory().getName() in ("TVs", "Audio and Video Equipment", "Laptops", "Computer Peripherals")) from $items
     then
     	System.out.println("ITEM IMA 5 ARTIKALA KOJI SU TVs, Audio and Video, Laptops ili Computer Peripherals");
-    	$i.getDiscounts().add(new ItemDiscount(5, "BASE", "if you order over 5 articles in category TVs, Audio and Video, Laptops or Computer Peripherals, you get 5% discount", $i));
+    	$i.getDiscounts().add(new ItemDiscount(5, "BASE", "if you order over 5 articles in category TVs, Audio and Video, Laptops or Computer Peripherals, you get 5% BASE discount", $i));
 		
 end
 
@@ -54,7 +55,7 @@ rule "add 7% BASE ITEM discount if value of item is >= $50 and articles belong t
     	) from $items
     then
     	System.out.println("VREDNOST ITEMA JE >= $50 I ARTIKLI SPADAJU U ROBU SIROKE POTROSNJE " + $i);
-    	$i.getDiscounts().add(new ItemDiscount(7, "BASE", "if you order articles in value over 50$ from the 'Goods of Broad Consumption' category, you get 7% discount", $i));
+    	$i.getDiscounts().add(new ItemDiscount(7, "BASE", "if you order articles in value over 50$ from the 'Goods of Broad Consumption' category, you get 7% BASE discount", $i));
 		
 end
 
@@ -99,7 +100,7 @@ rule "add 2% ADDITIONAL discount if you bought the same item in the last 15 days
 		$i: Item(article.getName() == $item_in_last_two_weeks.getArticle().getName()) from $items_in_receipt
 	then
 		System.out.println("KUPILI STE ISTI ARTIKAL U POSLEDNJIH 15 DANA, 2% POPUST");
-		$i.getDiscounts().add(new ItemDiscount(2, "ADDITIONAL", "if you ordered article from this item in the last 2 weeks, you get 2% discount", $i));
+		$i.getDiscounts().add(new ItemDiscount(2, "ADDITIONAL", "if you ordered article from this item in the last 2 weeks, you get 2% ADDITIONAL discount", $i));
 
 end
 
@@ -116,7 +117,7 @@ rule "add 1% ADDITIONAL discount if you bought an item from the same category in
 		$i: Item(article.getCategory().getName() == $category_in_last_month.getName()) from $items_in_receipt
 	then
 		System.out.println("KUPILI STE ARTIKAL IZ ISTE KATEGORIJE U POSLEDNJIH 30 DANA, 1% POPUST");
-		$i.getDiscounts().add(new ItemDiscount(1, "ADDITIONAL", "if you ordered article from the same category in the last month, you get 1% discount", $i));
+		$i.getDiscounts().add(new ItemDiscount(1, "ADDITIONAL", "if you ordered article from the same category in the last month, you get 1% ADDITIONAL discount", $i));
 
 end
 
@@ -125,7 +126,7 @@ rule "add discount if article is on sale"
 	
 	when 
 		Receipt($items_in_receipt: items)
-		$i: Item($article_category: article.getCategory(), $sales_for_item: article.getCategory().getSales()) from $items_in_receipt
+		$i: Item($sales_for_item: article.getCategory().getSales()) from $items_in_receipt
 		$sale: Sale(fromDate.getTime() < currentDate.getTime(), toDate.getTime() > currentDate.getTime()) from $sales_for_item
 	then
 		System.out.println("ARTIKAL JE NA SEZONSKOJ AKCIJI " + $sale.getDiscount() + "% POPUST");

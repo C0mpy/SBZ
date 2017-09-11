@@ -32,7 +32,7 @@ public class SpendingLimit {
 	public SpendingLimit(LimitDTO limit) {
 		this.id = (long) limit.getId();
 		this.fromLimit = limit.getFromLimit();
-		this.toLimit = limit.getFromLimit();
+		this.toLimit = limit.getToLimit();
 		this.priceToPoints = limit.getPriceToPoints();
 	}
 

@@ -3,6 +3,8 @@ package app.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.websocket.server.PathParam;
+
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import app.dto.ItemDTO;
 import app.dto.MessageDTO;
 import app.dto.OrderDTO;
+import app.dto.ReceiptDTO;
 import app.models.Article;
 import app.models.Customer;
 import app.models.Item;
@@ -85,7 +88,7 @@ public class CustomerController {
 		
 		Item item = null;
 		
-		// if receipt already contains the same item you are trying to buy, just add ammount to the existing receipt item
+		// if receipt already contains the same item you are trying to buy, just add amount to the existing receipt item
 		for(Item i : receipt.getItems()) {
 			if(i.getArticle().getCode().equals(article.getCode())) {
 				receipt.getItems().remove(i);
@@ -146,7 +149,6 @@ public class CustomerController {
 	
 	@RequestMapping(value = "/order", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity order(@RequestBody OrderDTO orderDTO) {
-		System.out.println(orderDTO);
 		
 		Receipt receipt = receiptRepository.findOneByCode(orderDTO.getReceiptCode());
 		
@@ -168,6 +170,36 @@ public class CustomerController {
 		}
 		
 		return sum;
+	}
+	
+	@RequestMapping(value = "/receipt/{receiptCode}/item/{itemId}", method = RequestMethod.DELETE)
+	public ResponseEntity removeItem(@PathVariable String receiptCode, @PathVariable String itemId) {
+		
+		Item i = itemRepository.findOne(Long.parseLong(itemId));
+		Receipt r = receiptRepository.findOneByCode(receiptCode);
+		
+		r.getItems().remove(i);
+	
+		double price = r.getTotalPrice();
+		price -= i.getTotalPrice();
+		r.setTotalPrice(price);
+		
+		receiptRepository.save(r);
+		itemRepository.delete(i.getId());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(r);
+	}
+	
+	@RequestMapping(value = "/{customerId}/findReceipts", method = RequestMethod.GET)
+	public ResponseEntity findReceipts(@PathVariable String customerId) {
+		
+		ArrayList<Receipt> receipts = receiptRepository.findAllByCustomerId(Long.parseLong(customerId));
+		
+		ArrayList<ReceiptDTO> result = new ArrayList<ReceiptDTO>();
+		for(Receipt r : receipts) 
+			result.add(new ReceiptDTO(r));
+		
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
 

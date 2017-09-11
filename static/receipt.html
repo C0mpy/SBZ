@@ -32,9 +32,9 @@
 					<tr>
 						<td>{{item.article.name}}</td>
 						<td>{{item.amount}}</td>
-						<td>{{item.totalPrice}}</td>
+						<td>{{item.totalPrice}} $</td>
 						<td>{{item.discount}}%</td>
-						<td>{{item.finalPrice}}</td>
+						<td>{{item.finalPrice}} $</td>
 						<td>{{item.article.category.name}}</td>
 						<td>{{item.article.category.maxDiscount}}%</td>
 					</tr>
@@ -57,9 +57,9 @@
 						<th width="25%">Earned Points</th>
 					</tr>
 					<tr>
-						<td>{{receiptCtrl.receipt.totalPrice}}</td>
-						<td>{{receiptCtrl.receipt.discount}}</td>
-						<td>{{receiptCtrl.receipt.finalPrice}}</td>
+						<td>{{receiptCtrl.receipt.totalPrice}} $</td>
+						<td>{{receiptCtrl.receipt.discount}}%</td>
+						<td>{{receiptCtrl.receipt.finalPrice}} $</td>
 						<td>{{receiptCtrl.receipt.earnedPoints}}</td>
 					</tr>
 				</table>

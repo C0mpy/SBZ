@@ -66,21 +66,6 @@ public class Receipt {
 		this.items = new ArrayList<Item>();
 		this.discounts = new ArrayList<ReceiptDiscount>();
 	}
-	
-	public Receipt(ReceiptDTO receiptDTO) {
-		this.code = receiptDTO.getCode();
-		this.date = receiptDTO.getDate();
-		this.customer = receiptDTO.getCustomer();
-		this.totalPrice = receiptDTO.getTotalPrice();
-		this.discount = 0;
-		this.discounts = new ArrayList<ReceiptDiscount>();
-		this.finalPrice = 0;
-		this.spentPoints = 0;
-		this.earnedPoints = 0;
-		this.items = receiptDTO.getItems();
-		this.state = "NEW";
-	}
-	
 
 	public String getCode() {
 		return code;

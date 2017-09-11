@@ -27,7 +27,7 @@
 				<td class="text-center">${{item.articlePrice}}</td>
 				<td class="text-center">{{item.amount}}</td>
 				<td class="text-center">${{item.totalPrice.toFixed(2)}}</td>
-				<td class="text-center"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
+				<td class="text-center"><button type="button" ng-click="cartCtrl.removeItem(item.id)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
 				
 			</tr>
 		</tbody>

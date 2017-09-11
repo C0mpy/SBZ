@@ -61,7 +61,7 @@
         	vm.goTo("article_order");
         }
         
-        // fetch receipt that you left last time you logged and didnt finish
+        // fetch receipt that you left last time you logged and didn't finish
         function getOldReceipt() {
         	$http.get("/api/customer/" + vm.user.id + "/getOldReceipt").then(function(response) {
         		if(response.data) {

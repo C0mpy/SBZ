@@ -45,6 +45,7 @@
         function getReceipts() {
         	request = {"message" : vm.receiptStatus};
         	$http.post("/api/salesman/receiptState", request).then(function(response) {
+        		console.log(vm.receipts);
     			vm.receipts = response.data;    			
             });
         }
@@ -58,8 +59,8 @@
     					articles.push({"code" : response.data[i]["article"]["code"], "name" : response.data[i]["article"]["name"]})
     				}
     				alert("Receipt cannot be accepted, these Items are low on amount: " + JSON.stringify(articles));
-    				getReceipts();
     			}
+    			getReceipts();
             });
         }
         

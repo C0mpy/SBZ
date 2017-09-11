@@ -5,13 +5,10 @@
 			<div class="form-body">
 				<div class="innter-form">
 					<form class="sa-innate-form" method="post">
-
-						<div class="text-center">
-							<img ngf-thumbnail="profileCtrl.user.picture" class="thumb"> 
-						</div>
+						<img ng-src="{{profileCtrl.user.picture}}" width="100%" height="100%">
 						<div class="text-center" style="color:blue;" ng-show="profileCtrl.user.type == 'Customer'">
 							<p>Points: {{profileCtrl.user.points}}</p>
-						</div><br>
+						</div><br><br>
 						<label>Username</label> 
 						<input type="text" ng-model="profileCtrl.user.username" disabled> 
 						<label>First Name</label> 
@@ -36,11 +33,11 @@
 							<div class="col-md-6">
 								<p><i>Receipt#:&nbsp {{receipt.code}}</i></p>
 								<p><i>State:&nbsp {{receipt.state}}</i></p>
-								<p><i>Date:&nbsp {{receipt.date}}</i></p>
+								<p><i>Date:&nbsp {{receipt.date  | date : 'dd-MM-yyyy HH:mm:ss'}}</i></p>
 							</div>
 							<div class="col-md-6">
 								<p><i>Price:&nbsp {{receipt.totalPrice}}$</i></p>
-								<p><i>Discount:&nbsp {{receipt.totalDiscount}}%</i></p>
+								<p><i>Discount:&nbsp {{receipt.discount}}%</i></p>
 								<p><i>Final Price:&nbsp {{receipt.finalPrice}}$</i></p>
 							</div>
 						</div>

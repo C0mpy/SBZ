@@ -28,11 +28,10 @@
         	$location.path('/' + path.toLowerCase());
         }
         
-        // here should be a check if the certain article has already been added to the receipt, i dont want to add another item to receipt but
-        // add values to the same item
+        // if receipt doesn't exist create one
+        // add item to the receipt
         function order() {
         	if(vm.receipt) {
-        		console.log(vm.receipt);
         		var item = {"receipt" : vm.receipt.code, "article" : vm.article.code, "ammount" : vm.ammount, "articlePrice" : vm.article.price,
         				"totalPrice" : vm.article.price * vm.ammount};
         		vm.addItem(item);
@@ -40,7 +39,6 @@
         	else {
         		var receipt = {"message" : vm.user.id};
         		$http.post("/api/customer/createNewReceipt", receipt).then(function(response) {
-        			console.log(response.data)
         			$sessionStorage.receipt = response.data;
         			vm.receipt = response.data;
         			

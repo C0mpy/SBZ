@@ -55,6 +55,9 @@ public class ManagerController {
 		for(LimitDTO l : limits)
 			saveLimits.add(new SpendingLimit(l));
 		
+		for(SpendingLimit l : saveLimits)
+			System.out.println(l);
+		
 		spendingLimitRepository.save(saveLimits);
 		return new ResponseEntity(HttpStatus.OK);
 	}

@@ -8,16 +8,22 @@
         
         vm.goTo = goTo;
         vm.calculateDiscounts = calculateDiscounts;
+        vm.removeItem = removeItem;
         
         function goTo(path) {
         	$location.path('/' + path.toLowerCase());
         }
         
         function calculateDiscounts() {
-        	var receipt = {"code" : vm.receipt.code, "date" : vm.receipt.date, "customer" : vm.receipt.customer, "totalPrice" : vm.receipt.totalPrice, "items" : vm.receipt.items};
         	$http.post("/api/customer/calculateDiscounts", {"message" : vm.receipt.code}).then(function(response) {
     			$sessionStorage.receipt = response.data;
     			vm.goTo("receipt");
+            });
+        }
+        
+        function removeItem(itemId) {
+        	$http.delete("/api/customer/receipt/" + vm.receipt.code + "/item/" + itemId).then(function(response) {
+    			vm.receipt = response.data;
             });
         }
         

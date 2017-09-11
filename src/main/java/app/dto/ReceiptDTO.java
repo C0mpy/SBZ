@@ -6,26 +6,28 @@ import java.util.List;
 
 import app.models.Customer;
 import app.models.Item;
+import app.models.Receipt;
 
 public class ReceiptDTO {
 	
 	String code;
+	String state;
 	Date date;
-	Customer customer;
 	double totalPrice;
-	List<Item> items;
+	int discount;
+	double finalPrice;
 	
 	public ReceiptDTO() {
 		super();
 	}
-
-	public ReceiptDTO(String code, Date date, Customer customer, double totalPrice, List<Item> items) {
-		super();
-		this.code = code;
-		this.date = date;
-		this.customer = customer;
-		this.totalPrice = totalPrice;
-		this.items = items;
+	
+	public ReceiptDTO(Receipt r) {
+		this.code = r.getCode();
+		this.state = r.getState();
+		this.date = r.getDate();
+		this.totalPrice = r.getTotalPrice();
+		this.discount = r.getDiscount();
+		this.finalPrice = r.getFinalPrice();
 	}
 
 	public String getCode() {
@@ -36,20 +38,20 @@ public class ReceiptDTO {
 		this.code = code;
 	}
 
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
 	public Date getDate() {
 		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 	public double getTotalPrice() {
@@ -60,18 +62,21 @@ public class ReceiptDTO {
 		this.totalPrice = totalPrice;
 	}
 
-	public List<Item> getItems() {
-		return items;
+	public int getDiscount() {
+		return discount;
 	}
 
-	public void setItems(List<Item> items) {
-		this.items = items;
+	public void setDiscount(int discount) {
+		this.discount = discount;
 	}
 
-	@Override
-	public String toString() {
-		return "ReceiptDTO [code=" + code + ", date=" + date + ", customer=" + customer + ", totalPrice=" + totalPrice
-				+ ", items=" + items + "]";
+	public double getFinalPrice() {
+		return finalPrice;
 	}
+
+	public void setFinalPrice(double finalPrice) {
+		this.finalPrice = finalPrice;
+	}
+
 	
 }
